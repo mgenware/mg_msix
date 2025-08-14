@@ -1,13 +1,17 @@
 import 'dart:io';
-import 'package:mg_msix/src/context_menu_configuration.dart';
-import 'package:path/path.dart' as p;
+
 import 'package:args/args.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mg_msix/src/context_menu_configuration.dart';
+import 'package:msix/src/context_menu_configuration.dart';
 import 'package:package_config/package_config.dart';
+import 'package:path/path.dart' as p;
+import 'package:path/path.dart' as p;
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart';
+
 import 'command_line_converter.dart';
 import 'method_extensions.dart';
 import 'sign_tool.dart';
@@ -23,8 +27,13 @@ class Configuration {
   String? identityName;
   String? msixVersion;
   String? appDescription;
-  String buildFilesFolder =
-      p.join(Directory.current.path, 'build', 'windows', 'runner', 'Release');
+  String buildFilesFolder = p.join(
+    Directory.current.path,
+    'build',
+    'windows',
+    'runner',
+    'Release',
+  );
   String? certificatePath;
   String? certificatePassword;
   String? publisher;
@@ -66,8 +75,10 @@ class Configuration {
       p.join(msixAssetsPath, 'MSIX-Toolkit', 'Redist.x64');
   String get msixPath =>
       p.join(outputPath ?? buildFilesFolder, '${outputName ?? appName}.msix');
-  String get appInstallerPath => p.join(publishFolderPath!,
-      basename(msixPath).replaceAll('.msix', '.appinstaller'));
+  String get appInstallerPath => p.join(
+    publishFolderPath!,
+    basename(msixPath).replaceAll('.msix', '.appinstaller'),
+  );
   String pubspecYamlPath = "pubspec.yaml";
   String osMinVersion = '10.0.17763.0';
   bool isTestCertificate = false;
@@ -86,7 +97,8 @@ class Configuration {
     msixVersion =
         _args['version'] ?? yaml['msix_version'] ?? _getPubspecVersion(pubspec);
     certificatePath = _args['certificate-path'] ?? yaml['certificate_path'];
-    certificatePassword = _args['certificate-password'] ??
+    certificatePassword =
+        _args['certificate-password'] ??
         yaml['certificate_password']?.toString();
     outputPath = _args['output-path'] ?? yaml['output_path'];
     outputName = _args['output-name'] ?? yaml['output_name'];
@@ -107,9 +119,11 @@ class Configuration {
         yaml['trim_logo']?.toString().toLowerCase() == 'false') {
       trimLogo = false;
     }
-    store = _args.wasParsed('store') ||
+    store =
+        _args.wasParsed('store') ||
         yaml['store']?.toString().toLowerCase() == 'true';
-    createWithDebugBuildFiles = _args.wasParsed('debug') ||
+    createWithDebugBuildFiles =
+        _args.wasParsed('debug') ||
         yaml['debug']?.toString().toLowerCase() == 'true';
 
     displayName = _args['display-name'] ?? yaml['display_name'];
@@ -151,7 +165,8 @@ class Configuration {
     capabilities = _args['capabilities'] ?? yaml['capabilities'];
     languages = _getLanguages(yaml);
     appUriHandlerHosts = _getAppUriHandlerHosts(yaml);
-    enableAtStartup = _args.wasParsed('enable-at-startup') ||
+    enableAtStartup =
+        _args.wasParsed('enable-at-startup') ||
         yaml['enable_at_startup']?.toString().toLowerCase() == 'true';
 
     // A more advanced version of 'enable_at_startup'
@@ -162,12 +177,15 @@ class Configuration {
     // toast activator configurations
     dynamic toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();
 
-    toastActivatorCLSID = _args['toast-activator-clsid'] ??
+    toastActivatorCLSID =
+        _args['toast-activator-clsid'] ??
         toastActivatorYaml['clsid']?.toString();
-    toastActivatorArguments = _args['toast-activator-arguments'] ??
+    toastActivatorArguments =
+        _args['toast-activator-arguments'] ??
         toastActivatorYaml['arguments']?.toString() ??
         '----AppNotificationActivationServer';
-    toastActivatorDisplayName = _args['toast-activator-display-name'] ??
+    toastActivatorDisplayName =
+        _args['toast-activator-display-name'] ??
         toastActivatorYaml['display_name']?.toString() ??
         'Toast activator';
 
@@ -176,31 +194,37 @@ class Configuration {
 
     publishFolderPath =
         _args['publish-folder-path'] ?? installerYaml['publish_folder_path'];
-    hoursBetweenUpdateChecks = int.parse(_args['hours-between-update-checks'] ??
-        installerYaml['hours_between_update_checks']?.toString() ??
-        '0');
+    hoursBetweenUpdateChecks = int.parse(
+      _args['hours-between-update-checks'] ??
+          installerYaml['hours_between_update_checks']?.toString() ??
+          '0',
+    );
     if (hoursBetweenUpdateChecks < 0) hoursBetweenUpdateChecks = 0;
-    automaticBackgroundTask = _args.wasParsed('automatic-background-task') ||
+    automaticBackgroundTask =
+        _args.wasParsed('automatic-background-task') ||
         installerYaml['automatic_background_task']?.toString().toLowerCase() ==
             'true';
-    updateBlocksActivation = _args.wasParsed('update-blocks-activation') ||
+    updateBlocksActivation =
+        _args.wasParsed('update-blocks-activation') ||
         installerYaml['update_blocks_activation']?.toString().toLowerCase() ==
             'true';
-    showPrompt = _args.wasParsed('show-prompt') ||
+    showPrompt =
+        _args.wasParsed('show-prompt') ||
         installerYaml['show_prompt']?.toString().toLowerCase() == 'true';
     forceUpdateFromAnyVersion =
         _args.wasParsed('force-update-from-any-version') ||
-            installerYaml['force_update_from_any_version']
-                    ?.toString()
-                    .toLowerCase() ==
-                'true';
+        installerYaml['force_update_from_any_version']
+                ?.toString()
+                .toLowerCase() ==
+            'true';
 
     // context menu configurations
     dynamic contextMenuYaml = yaml['context_menu'];
 
     bool skipContextMenu = _args.wasParsed('skip-context-menu');
 
-    contextMenuConfiguration = contextMenuYaml != null &&
+    contextMenuConfiguration =
+        contextMenuYaml != null &&
             contextMenuYaml is YamlMap &&
             !skipContextMenu
         ? ContextMenuConfiguration.fromYaml(contextMenuYaml)
@@ -220,7 +244,8 @@ class Configuration {
     if (identityName.isNull) {
       if (store) {
         _logger.stderr(
-            'identity name is empty, check "msix_config: identity_name" at pubspec.yaml');
+          'identity name is empty, check "msix_config: identity_name" at pubspec.yaml',
+        );
         throw 'you can find your store "identity_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Identity/Name';
       } else {
         identityName = 'com.flutter.$cleanAppName';
@@ -233,7 +258,8 @@ class Configuration {
     if (publisherName.isNull) {
       if (store) {
         _logger.stderr(
-            'publisher display name is empty, check "msix_config: publisher_display_name" at pubspec.yaml');
+          'publisher display name is empty, check "msix_config: publisher_display_name" at pubspec.yaml',
+        );
         throw 'you can find your store "publisher_display_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Properties/PublisherDisplayName';
       } else {
         publisherName = identityName;
@@ -241,12 +267,14 @@ class Configuration {
     }
     if (signMsix == false && publisher.isNullOrEmpty) {
       _logger.stderr(
-          'when sign_msix is false, you must provide the publisher value at "msix_config: publisher" in the pubspec.yaml file');
+        'when sign_msix is false, you must provide the publisher value at "msix_config: publisher" in the pubspec.yaml file',
+      );
       exit(-1);
     }
     if (store && publisher.isNullOrEmpty) {
       _logger.stderr(
-          'publisher is empty, check "msix_config: publisher" at pubspec.yaml');
+        'publisher is empty, check "msix_config: publisher" at pubspec.yaml',
+      );
       throw 'you can find your store "publisher" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Properties/Publisher';
     }
     if (msixVersion.isNull) msixVersion = '1.0.0.0';
@@ -349,9 +377,11 @@ class Configuration {
 
           for (List<ContextMenuItemCommand> command2
               in contextMenuConfiguration!.items.map((e) => e.commands)) {
-            if (command2.any((element) =>
-                element.clsid == command.clsid &&
-                element.customDllPath != command.customDllPath)) {
+            if (command2.any(
+              (element) =>
+                  element.clsid == command.clsid &&
+                  element.customDllPath != command.customDllPath,
+            )) {
               throw 'Context menu command clsid must be unique for each class, but found duplicate.\nClsid: ${command.clsid} with different dll path: ${command.customDllPath ?? contextMenuConfiguration!.dllPath} and ${command2.firstWhere((element) => element.id == command.id).customDllPath}';
             }
           }
@@ -367,13 +397,19 @@ class Configuration {
     _logger.trace('validating build files');
 
     if (!await Directory(buildFilesFolder).exists() ||
-        !await Directory(buildFilesFolder)
-            .list()
-            .any((file) => file.path.endsWith('.exe'))) {
+        !await Directory(
+          buildFilesFolder,
+        ).list().any((file) => file.path.endsWith('.exe'))) {
       throw 'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again';
     }
 
-    executableFileName ??= '$appName.exe';
+    executableFileName ??= await _getExecutableFileName();
+    if (executableFileName == null) {
+      _logger.stderr(
+        'No executable file found in $buildFilesFolder, first run "flutter build windows" then try again',
+      );
+      exit(-1);
+    }
   }
 
   /// Declare and parse the cli arguments
@@ -427,22 +463,29 @@ class Configuration {
   }
 
   Future<String> _updateBuildFilesFolder() async {
-    final String buildFilesFolderStart =
-        buildFilesFolder.substring(0, buildFilesFolder.lastIndexOf('runner'));
-    final String buildFilesFolderArchitecture =
-        p.join(buildFilesFolderStart, architecture);
-    final String buildFilesFolderEnd =
-        buildFilesFolder.substring(buildFilesFolder.lastIndexOf('runner'));
+    final String buildFilesFolderStart = buildFilesFolder.substring(
+      0,
+      buildFilesFolder.lastIndexOf('runner'),
+    );
+    final String buildFilesFolderArchitecture = p.join(
+      buildFilesFolderStart,
+      architecture,
+    );
+    final String buildFilesFolderEnd = buildFilesFolder.substring(
+      buildFilesFolder.lastIndexOf('runner'),
+    );
 
     if (architecture == 'arm64' &&
         !(await Directory(buildFilesFolderArchitecture).exists())) {
       _logger.stderr(
-          'cannot find arm64 build folder at: $buildFilesFolderArchitecture');
+        'cannot find arm64 build folder at: $buildFilesFolderArchitecture',
+      );
       exit(-1);
     }
 
-    if (await Directory(p.join(buildFilesFolderArchitecture, 'runner'))
-        .exists()) {
+    if (await Directory(
+      p.join(buildFilesFolderArchitecture, 'runner'),
+    ).exists()) {
       return p.join(buildFilesFolderStart, architecture, buildFilesFolderEnd);
     } else {
       return p.join(buildFilesFolderStart, buildFilesFolderEnd);
@@ -454,12 +497,14 @@ class Configuration {
 
     if (publishFolderPath.isNullOrEmpty ||
         (!await Directory(publishFolderPath!).exists() &&
-            !await Directory(publishFolderPath =
-                    '${Directory.current.path}\\${publishFolderPath!}')
-                .exists())) {
+            !await Directory(
+              publishFolderPath =
+                  '${Directory.current.path}\\${publishFolderPath!}',
+            ).exists())) {
       _logger.stderr(
-          'publish folder path is not exists, check "app_installer: publish_folder_path" at pubspec.yaml'
-              .red);
+        'publish folder path is not exists, check "app_installer: publish_folder_path" at pubspec.yaml'
+            .red,
+      );
       exit(-1);
     } else {
       publishFolderPath = Uri.decodeFull(publishFolderPath!);
@@ -508,7 +553,7 @@ class Configuration {
         pubspecVersion.major,
         pubspecVersion.minor,
         pubspecVersion.patch,
-        0
+        0,
       ].join('.');
     } on FormatException {
       _logger.stderr(
@@ -538,14 +583,131 @@ class Configuration {
       ((_args['protocol-activation'] ?? config['protocol_activation'])
               as String?)
           ?.split(',')
-          .map((protocol) => protocol
-              .trim()
-              .toLowerCase()
-              .replaceAll('://', '')
-              .replaceAll(':/', '')
-              .replaceAll(':', ''))
+          .map(
+            (protocol) => protocol
+                .trim()
+                .toLowerCase()
+                .replaceAll('://', '')
+                .replaceAll(':/', '')
+                .replaceAll(':', ''),
+          )
           .where((protocol) => protocol.isNotEmpty) ??
       [];
+
+  Future<String> _getExecutableFileName() async {
+    _logger.trace('Searching for executable file name...');
+    //Try to obtain executable name from CMake
+    String? executableName = await _getExecutableFromCMake();
+    if (executableName != null) {
+      _logger.trace('executable name found from CMake: $executableName');
+      return executableName;
+    }
+    _logger.trace('executable name not found from CMake, trying pubspec.yaml');
+
+    //Try to obtain executable name from pubspec.yaml (app name)
+    executableName = await _getExecutableFromPubspec();
+    if (executableName != null) {
+      _logger.trace('executable name found from pubspec: $executableName');
+      return executableName;
+    }
+    _logger.trace(
+      'executable name not found from pubspec, trying fallback method',
+    );
+    // Fallback to searching the build files folder
+    _logger.trace('using fallback method to find executable');
+    // Use the new helper method to find the executable, excluding unwanted exe names
+    executableName = await _findExecutableFileName(
+      exclude: ['PSFLauncher64.exe', 'crashpad_handler.exe'],
+    );
+    if (executableName == null) {
+      _logger.stderr(
+        'No executable file found in $buildFilesFolder, first run "flutter build windows" then try again',
+      );
+      exit(-1);
+    } else {
+      _logger.trace(
+        'executable name found from fallback method: $executableName',
+      );
+      return executableName;
+    }
+  }
+
+  Future<String?> _getExecutableFromCMake() async {
+    try {
+      final windowsPath = p.join(Directory.current.path, 'windows');
+      final cmakeFile = File(p.join(windowsPath, 'CMakeLists.txt'));
+
+      if (await cmakeFile.exists()) {
+        final content = await cmakeFile.readAsString();
+        final binaryNameMatch = RegExp(
+          r'set\s*\(\s*BINARY_NAME\s+"([^"]+)"\s*\)',
+          caseSensitive: false,
+        ).firstMatch(content);
+        if (binaryNameMatch != null) {
+          return '${binaryNameMatch.group(1)}.exe';
+        }
+
+        final projectMatch = RegExp(
+          r'project\s*\(\s*([^\s\)]+)',
+          caseSensitive: false,
+        ).firstMatch(content);
+        if (projectMatch != null) {
+          String projectName = projectMatch.group(1)!.replaceAll('"', '');
+          final expectedExe = '$projectName.exe';
+          if (await File(p.join(buildFilesFolder, expectedExe)).exists()) {
+            return expectedExe;
+          }
+        }
+      }
+    } catch (e) {
+      _logger.trace('Error reading CMake files: $e');
+    }
+    return null;
+  }
+
+  Future<String?> _getExecutableFromPubspec() async {
+    try {
+      if (appName != null && appName!.isNotEmpty) {
+        final expectedExe = '$appName.exe';
+        if (await File(p.join(buildFilesFolder, expectedExe)).exists()) {
+          return expectedExe;
+        }
+
+        final cleanAppName = appName!.replaceAll('_', '');
+        final expectedCleanExe = '$cleanAppName.exe';
+        if (await File(p.join(buildFilesFolder, expectedCleanExe)).exists()) {
+          return expectedCleanExe;
+        }
+
+        final lowercaseExe = '${appName!.toLowerCase()}.exe';
+        if (await File(p.join(buildFilesFolder, lowercaseExe)).exists()) {
+          return lowercaseExe;
+        }
+      }
+    } catch (e) {
+      _logger.trace('Error checking executable from pubspec: $e');
+    }
+    return null;
+  }
+
+  Future<String?> _findExecutableFileName({
+    required List<String> exclude,
+  }) async {
+    try {
+      final files = await Directory(buildFilesFolder).list().toList();
+      for (var file in files) {
+        if (file is File && p.extension(file.path).toLowerCase() == '.exe') {
+          final fileName = p.basename(file.path);
+          if (!exclude.contains(fileName)) {
+            return fileName;
+          }
+        }
+      }
+    } catch (e) {
+      _logger.trace('Error finding executable file: $e');
+    }
+    return null;
+  }
 }
 
 /// A more advanced version of 'enable_at_startup'.
