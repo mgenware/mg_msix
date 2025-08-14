@@ -1,6 +1,11 @@
 # mg-msix
 
-Fork of [msix](https://github.com/YehudaKremer/msix) with support for localized app names.
+Fork of [msix](https://github.com/YehudaKremer/msix).
+
+Changes made:
+
+- Added support for localized app names and descriptions.
+- Allow specifying a custom EXE name.
 
 ## Usage
 
@@ -37,7 +42,11 @@ msix_config:
     en-us: Hello world
     zh-Hans: 你好世界
 
-  # Other fields should be the same as the original msix package.
+  # New field added by this fork.
+  # Custom EXE name.
+  executable_file_name: my_funny_exe_name.exe
+
+  # ------- Other fields should be the same as the original msix package. ------- #
 ```
 
 **Use `dart run mg_msix:create --store` (`mg_msix` instead of `msix`) to build.**
