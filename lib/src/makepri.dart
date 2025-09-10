@@ -4,7 +4,6 @@ import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'configuration.dart';
 import 'method_extensions.dart';
-import 'package:path/path.dart' as p;
 
 /// Use the makepri.exe tool to generate package resource indexing files
 class MakePri {

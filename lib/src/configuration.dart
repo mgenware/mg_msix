@@ -4,9 +4,7 @@ import 'package:args/args.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mg_msix/src/context_menu_configuration.dart';
-import 'package:msix/src/context_menu_configuration.dart';
 import 'package:package_config/package_config.dart';
-import 'package:path/path.dart' as p;
 import 'package:path/path.dart' as p;
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -76,9 +74,9 @@ class Configuration {
   String get msixPath =>
       p.join(outputPath ?? buildFilesFolder, '${outputName ?? appName}.msix');
   String get appInstallerPath => p.join(
-    publishFolderPath!,
-    basename(msixPath).replaceAll('.msix', '.appinstaller'),
-  );
+        publishFolderPath!,
+        basename(msixPath).replaceAll('.msix', '.appinstaller'),
+      );
   String pubspecYamlPath = "pubspec.yaml";
   String osMinVersion = '10.0.17763.0';
   bool isTestCertificate = false;
@@ -97,8 +95,7 @@ class Configuration {
     msixVersion =
         _args['version'] ?? yaml['msix_version'] ?? _getPubspecVersion(pubspec);
     certificatePath = _args['certificate-path'] ?? yaml['certificate_path'];
-    certificatePassword =
-        _args['certificate-password'] ??
+    certificatePassword = _args['certificate-password'] ??
         yaml['certificate_password']?.toString();
     outputPath = _args['output-path'] ?? yaml['output_path'];
     outputName = _args['output-name'] ?? yaml['output_name'];
@@ -119,11 +116,9 @@ class Configuration {
         yaml['trim_logo']?.toString().toLowerCase() == 'false') {
       trimLogo = false;
     }
-    store =
-        _args.wasParsed('store') ||
+    store = _args.wasParsed('store') ||
         yaml['store']?.toString().toLowerCase() == 'true';
-    createWithDebugBuildFiles =
-        _args.wasParsed('debug') ||
+    createWithDebugBuildFiles = _args.wasParsed('debug') ||
         yaml['debug']?.toString().toLowerCase() == 'true';
 
     displayName = _args['display-name'] ?? yaml['display_name'];
@@ -165,8 +160,7 @@ class Configuration {
     capabilities = _args['capabilities'] ?? yaml['capabilities'];
     languages = _getLanguages(yaml);
     appUriHandlerHosts = _getAppUriHandlerHosts(yaml);
-    enableAtStartup =
-        _args.wasParsed('enable-at-startup') ||
+    enableAtStartup = _args.wasParsed('enable-at-startup') ||
         yaml['enable_at_startup']?.toString().toLowerCase() == 'true';
 
     // A more advanced version of 'enable_at_startup'
@@ -177,15 +171,12 @@ class Configuration {
     // toast activator configurations
     dynamic toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();
 
-    toastActivatorCLSID =
-        _args['toast-activator-clsid'] ??
+    toastActivatorCLSID = _args['toast-activator-clsid'] ??
         toastActivatorYaml['clsid']?.toString();
-    toastActivatorArguments =
-        _args['toast-activator-arguments'] ??
+    toastActivatorArguments = _args['toast-activator-arguments'] ??
         toastActivatorYaml['arguments']?.toString() ??
         '----AppNotificationActivationServer';
-    toastActivatorDisplayName =
-        _args['toast-activator-display-name'] ??
+    toastActivatorDisplayName = _args['toast-activator-display-name'] ??
         toastActivatorYaml['display_name']?.toString() ??
         'Toast activator';
 
@@ -200,31 +191,27 @@ class Configuration {
           '0',
     );
     if (hoursBetweenUpdateChecks < 0) hoursBetweenUpdateChecks = 0;
-    automaticBackgroundTask =
-        _args.wasParsed('automatic-background-task') ||
+    automaticBackgroundTask = _args.wasParsed('automatic-background-task') ||
         installerYaml['automatic_background_task']?.toString().toLowerCase() ==
             'true';
-    updateBlocksActivation =
-        _args.wasParsed('update-blocks-activation') ||
+    updateBlocksActivation = _args.wasParsed('update-blocks-activation') ||
         installerYaml['update_blocks_activation']?.toString().toLowerCase() ==
             'true';
-    showPrompt =
-        _args.wasParsed('show-prompt') ||
+    showPrompt = _args.wasParsed('show-prompt') ||
         installerYaml['show_prompt']?.toString().toLowerCase() == 'true';
     forceUpdateFromAnyVersion =
         _args.wasParsed('force-update-from-any-version') ||
-        installerYaml['force_update_from_any_version']
-                ?.toString()
-                .toLowerCase() ==
-            'true';
+            installerYaml['force_update_from_any_version']
+                    ?.toString()
+                    .toLowerCase() ==
+                'true';
 
     // context menu configurations
     dynamic contextMenuYaml = yaml['context_menu'];
 
     bool skipContextMenu = _args.wasParsed('skip-context-menu');
 
-    contextMenuConfiguration =
-        contextMenuYaml != null &&
+    contextMenuConfiguration = contextMenuYaml != null &&
             contextMenuYaml is YamlMap &&
             !skipContextMenu
         ? ContextMenuConfiguration.fromYaml(contextMenuYaml)
