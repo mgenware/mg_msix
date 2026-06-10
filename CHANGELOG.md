@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.17.0
+
+- Bump dependencies major versions
+- Add dependabot configuration [#322](https://github.com/YehudaKremer/msix/pull/322)
+- update documentation
+
 ## 3.16.13
 
 - Update `get_it` version [#320](https://github.com/YehudaKremer/msix/pull/320)

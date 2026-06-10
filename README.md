@@ -23,7 +23,7 @@ In your `pubspec.yaml`, add the `msix` package as a new [dev dependency] with
 the following command:
 
 ```console
-PS c:\src\flutter_project> flutter pub add --dev msix
+flutter pub add --dev msix
 ```
 
 ## 📦 Creating an MSIX installer
@@ -31,7 +31,7 @@ PS c:\src\flutter_project> flutter pub add --dev msix
 To create a MSIX installer, run the following command:
 
 ```console
-PS c:\src\flutter_project> dart run msix:create
+dart run msix:create
 ```
 
 ## ⚙️ Configuring your installer
