@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.18.0
+
+- Source the version-matched Visual C++ runtime from the VS redistributable [#326](https://github.com/YehudaKremer/msix/pull/326)
+
 ## 3.17.0
 
 - Bump dependencies major versions

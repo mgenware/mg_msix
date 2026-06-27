@@ -277,25 +277,9 @@ class Assets {
     'vcruntime140_threads.dll',
   ];
 
-  /// Copy the Visual C++ runtime (CRT) DLLs next to the app so the packaged app
-  /// runs on machines without a system-wide VC++ redistributable (for example a
-  /// clean Microsoft Store certification VM).
-  ///
-  /// Prefers the version-matched CRT from the build machine's Visual Studio
-  /// redistributable — the toolset that actually compiled the app. Microsoft's
-  /// binary-compatibility restriction requires the deployed redistributable to
-  /// be at least as new as the latest build tools used by any app component
-  /// (https://learn.microsoft.com/cpp/porting/binary-compat-2015-2017). The
-  /// DLLs bundled with this package are a fixed, manually-updated subset
-  /// (msvcp140 / vcruntime140 / vcruntime140_1) that can lag behind the
-  /// compiling toolset and omits the remaining CRT DLLs, so an app that imports
-  /// one of the missing DLLs, or was compiled with a newer toolset, can hit a
-  /// missing-DLL or entry-point-not-found failure at launch on a clean machine.
-  ///
-  /// Falls back to the bundled subset when no VS redistributable is found, so
-  /// behavior is unchanged on machines without Visual Studio installed. Only the
-  /// known [_vcRuntimeDllNames] present in the chosen source are copied, keeping
-  /// this in sync with the set removed by [cleanTemporaryFiles].
+  /// Copies VC++ CRT DLLs next to the app.
+  /// Uses a version-matched CRT from the newest VS install when available,
+  /// otherwise falls back to bundled DLLs. Only [_vcRuntimeDllNames] are copied.
   Future<void> copyVCLibsFiles() async {
     _logger.trace('copying VC libraries');
 
@@ -315,14 +299,8 @@ class Assets {
     }
   }
 
-  /// Locate the `Microsoft.VC<nnn>.CRT` redistributable folder matching the
-  /// configured [Configuration.architecture], using `vswhere` (which ships with
-  /// the Visual Studio Installer since VS 2017 15.2, including Build Tools) to
-  /// find the newest install that has the matching C++ toolset.
-  ///
-  /// Returns `null` when not on Windows, when `vswhere` is unavailable, or when
-  /// no matching redistributable is found — callers then fall back to the
-  /// bundled DLLs, preserving the previous behavior.
+  /// Finds the newest VS `Microsoft.VC<nnn>.CRT` folder for this architecture.
+  /// Returns `null` when unavailable, so callers can fall back to bundled DLLs.
   Future<String?> _findVCRedistCRTDir() async {
     if (!Platform.isWindows) return null;
 
