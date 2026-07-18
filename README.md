@@ -16,7 +16,7 @@ dev_dependencies:
   # msix: <version> # Remove this line.
   mg_msix:
     git:
-      url: https://github.com/mgenware/mg-msix
+      url: https://github.com/mgenware/mg_msix
 ```
 
 In `msix_config`:
